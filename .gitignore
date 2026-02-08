@@ -8,6 +8,7 @@
 .env
 .env.backup
 .env.production
+composer.lock
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -18,5 +19,5 @@ yarn-error.log
 /.idea
 /.vscode
 /docker/redis/
-/docker/postgres/
-/docker/mysql/
+/docker/pg_data/
+/docker/mysql_data/
