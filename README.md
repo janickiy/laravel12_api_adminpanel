@@ -46,6 +46,8 @@ php artisan l5-swagger:generate
 
 http://localhost:8080/api/documentation
 
+После выполнить команду docker-compose down && docker-compose up -d
+
 # Панель администратора
 
 http://localhost:8080/cp
