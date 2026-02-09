@@ -2,20 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Notes;
+
+use App\Repositories\NoteRepository;
 use App\Http\Requests\Admin\Notes\EditRequest;
+use App\Http\Requests\Admin\Notes\DeleteRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Exception;
+
 
 class NotesController extends Controller
 {
+    public function __construct(
+        private NoteRepository $noteRepository,
+    )
+    {
+        parent::__construct();
+    }
+
     /**
      * @return View
      */
     public function index(): View
     {
-        return view('notes.index')->with('title', 'Заметки');
+        return view('admin.notes.index')->with('title', 'Заметки');
     }
 
     /**
@@ -24,11 +34,11 @@ class NotesController extends Controller
      */
     public function edit(int $id): View
     {
-        $row = Notes::find($id);
+        $row = $this->noteRepository->find($id);
 
         if (!$row) abort(404);
 
-        return view('notes.create_edit')->with('title', 'Редактирование');
+        return view('admin.notes.create_edit', compact('row'))->with('title', 'Редактирование');
     }
 
     /**
@@ -37,23 +47,25 @@ class NotesController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $row = Notes::find($request->id);
+        try {
+            $this->noteRepository->update($request->id, $request->all());
+        } catch (Exception $e) {
+            report($e);
 
-        if (!$row) abort(404);
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
-        $row->title = $request->input('title');
-        $row->content = $request->input('content');
-        $row->save();
-
-        return redirect()->route('notes.index')->with('success', 'Данные обновлены успешно');
+        return redirect()->route('admin.notes.index')->with('success', 'Данные обновлены успешно');
     }
-
     /**
-     * @param Request $request
+     * @param DeleteRequest $request
      * @return void
      */
-    public function destroy(Request $request): void
+    public function destroy(DeleteRequest $request): void
     {
-        Notes::find($request->id)->delete();
+        $this->noteRepository->delete($request->id);;
     }
 }

@@ -18,7 +18,7 @@ class AdminController extends Controller
      */
     public function index(): View
     {
-        return view('admin.index')->with('title', 'Пользователи');
+        return view('admin.admin.index')->with('title', 'Пользователи');
     }
 
     /**
@@ -26,13 +26,9 @@ class AdminController extends Controller
      */
     public function create(): View
     {
-        $options = [
-            'admin' => 'Админ',
-            'moderator' => 'Модератор',
-            'editor' => 'Редактор',
-        ];
+        $options = Admin::$role_name;
 
-        return view('admin.create_edit', compact('options'))->with('title', 'Добавить пользователя');
+        return view('admin.admin.create_edit', compact('options'))->with('title', 'Добавить пользователя');
     }
 
     /**
@@ -56,13 +52,9 @@ class AdminController extends Controller
 
         if (!$row) abort(404);
 
-        $options = [
-            'admin' => 'Админ',
-            'moderator' => 'Модератор',
-            'editor' => 'Редактор',
-        ];
+        $options = Admin::$role_name;
 
-        return view('admin.create_edit', compact('row', 'options'))->with('title', 'Редактировать пользователя');
+        return view('admin.admin.create_edit', compact('row', 'options'))->with('title', 'Редактировать пользователя');
     }
 
     /**
@@ -86,7 +78,7 @@ class AdminController extends Controller
 
         $admin->save();
 
-        return redirect()->route('admin.index')->with('success', 'Данные успешно обновлены!');
+        return redirect()->route('admin.admin.index')->with('success', 'Данные успешно обновлены!');
     }
 
     /**

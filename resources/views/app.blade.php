@@ -97,7 +97,7 @@
             <!-- Sidebar user (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="info">
-                    <a href="{{ route('admin.admins.edit', ['id' => Auth::user()->id ]) }}"
+                    <a href="{{ route('admin.admin.edit', ['id' => Auth::user()->id ]) }}"
                        class="d-block">{{ Auth::user()->login }} @if(!empty(Auth::user()->name))
                             ({{ Auth::user()->name }})
                         @endif</a>
@@ -131,10 +131,18 @@
 
                     @endif
 
+                    <li class="nav-item">
+                        <a href="{{ route('admin.catalog.index') }}" class="nav-link{{ Request::is('catalog*') ? ' active' : '' }}"
+                           title="Каталог">
+                            <i class="nav-icon fas fa-list"></i>
+                            <p>заметки</p>
+                        </a>
+                    </li>
+
                     @if(PermissionsHelper::has_permission('admin'))
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.admins.index') }}" class="nav-link{{ Request::is('admins*') ? ' active' : '' }}"
+                            <a href="{{ route('admin.admin.index') }}" class="nav-link{{ Request::is('admin*') ? ' active' : '' }}"
                                title="пользователи">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>пользователи</p>
@@ -199,9 +207,6 @@
 
 {!! Html::script('/plugins/sweetalert2/sweetalert2.min.js') !!}
 {!! Html::script('/plugins/toastr/toastr.min.js') !!}
-
-<!-- Cookie -->
-{!! Html::script('/plugins/cookie/jquery.cookie.js') !!}
 
 <!-- AdminLTE App -->
 {!! Html::script('/dist/js/adminlte.min.js') !!}

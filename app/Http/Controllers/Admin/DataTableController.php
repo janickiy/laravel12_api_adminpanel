@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
+use App\Models\Catalog;
 use App\Models\Notes;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -13,6 +13,7 @@ class DataTableController extends Controller
 {
     /**
      * @return JsonResponse
+     * @throws \Exception
      */
     public function notes(): JsonResponse
     {
@@ -20,7 +21,7 @@ class DataTableController extends Controller
 
         return Datatables::of($row)
             ->addColumn('actions', function ($row) {
-                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.notes.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . route('admin.notes.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
@@ -30,6 +31,7 @@ class DataTableController extends Controller
 
     /**
      * @return JsonResponse
+     * @throws \Exception
      */
     public function admin(): JsonResponse
     {
@@ -37,7 +39,7 @@ class DataTableController extends Controller
 
         return Datatables::of($row)
             ->addColumn('action', function ($row) {
-                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.admins.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . route('admin.admin.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
 
                 if ($row->id !== Auth::id())
                     $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
@@ -47,17 +49,26 @@ class DataTableController extends Controller
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
             ->editColumn('role', function ($row) {
-                switch ($row->role) {
-                    case 'admin':
-                        return 'Админ';
-                    case 'editor':
-                        return 'Редактор';
-                    case 'moderator':
-                        return 'Модератор';
-                    default:
-                        return '';
-                }
+                return Admin::$role_name[$row->role];
             })
             ->rawColumns(['action', 'id'])->make(true);
     }
+
+    /**
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function catalogs(): JsonResponse
+    {
+        $row = Catalog::query();
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . route('admin.catalog.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
+
 }

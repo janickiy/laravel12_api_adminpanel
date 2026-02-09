@@ -27,7 +27,7 @@
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="pb-3">
-                                    <a href="{{ route('admin.admins.create') }}" class="btn btn-info btn-sm pull-left">
+                                    <a href="{{ route('admin.admin.create') }}" class="btn btn-info btn-sm pull-left">
                                         <span class="fa fa-plus"> &nbsp;</span> добавить
                                     </a>
                                 </div>
@@ -131,7 +131,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: '{{ route('admin.admins.destroy') }}',
+                                    url: '{{ route('admin.admin.destroy') }}',
                                     type: "POST",
                                     dataType: "html",
                                     data: {id: rowid},

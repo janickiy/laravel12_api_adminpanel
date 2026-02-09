@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Notes;
+namespace App\Http\Requests\Admin\Catalog;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,9 +22,7 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'id' => 'required|integer|exists:notes,id'
+            'id' => 'required|integer|exists:catalog,id'
         ];
     }
 }

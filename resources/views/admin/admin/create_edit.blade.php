@@ -19,7 +19,7 @@
                     <header class="card card-primary">
 
                         <!-- form start -->
-                        {!! Form::open(['url' => isset($row) ? route('admin.admins.update') : route('admin.admins.store'), 'method' => isset($row) ? 'put' : 'post']) !!}
+                        {!! Form::open(['url' => isset($row) ? route('admin.admin.update') : route('admin.admin.store'), 'method' => isset($row) ? 'put' : 'post']) !!}
 
                         {!! isset($row) ? Form::hidden('id', $row->id) : '' !!}
 
@@ -97,7 +97,7 @@
                             <button type="submit" class="btn btn-primary">
                                 {{ isset($row) ? 'редактировать' : 'добавить' }}
                             </button>
-                            <a class="btn btn-default float-sm-right" href="{{ route('admin.admins.index') }}">
+                            <a class="btn btn-default float-sm-right" href="{{ route('admin.admin.index') }}">
                                 назад
                             </a>
                         </div>
