@@ -42,6 +42,10 @@ docker-compose up -d --build
 
 php artisan l5-swagger:generate
 
+документация доступна
+
+http://localhost:8080/api/documentation
+
 # Панель администратора
 
 http://localhost:8080/cp
