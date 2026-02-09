@@ -32,11 +32,11 @@ docker-compose up -d --build
 
 # Установка
 
-1`composer install`
-2`php artisan migrate`
-3`php artisan db:seed`
-4`php artisan key:generate`
-5`php artisan jwt:secret`
+1. `composer install`
+2. `php artisan migrate`
+3. `php artisan db:seed`
+4. `php artisan key:generate`
+5. `php artisan jwt:secret`
 
 # Генерация swagger api doc
 
