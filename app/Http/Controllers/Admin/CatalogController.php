@@ -26,6 +26,7 @@ class CatalogController extends Controller
      */
     public function index(): View
     {
+        dd(public_path(config('l5-swagger.documentations.default.paths.swagger_ui_assets_path') . 'swagger-ui.css'));
         return view('admin.catalog.index')->with('title', 'Категории');
     }
 

@@ -9,6 +9,7 @@ use App\Models\Notes;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 
 class NoteController extends Controller
 {
@@ -22,24 +23,7 @@ class NoteController extends Controller
         $this->middleware('auth:api');
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/notes",
-     *     summary="Get all notes",
-     *     @OA\Response(
-     *         response=200,
-     *         description="A list of notes",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="user_id", type="integer", example=1),
-     *             @OA\Property(property="title", type="string", example="Test Note"),
-     *             @OA\Property(property="content", type="string", example="This is a test note."),
-     *             @OA\Property(property="created_at", type="string", example="2024-05-20T14:00:00.000000Z"),
-     *             @OA\Property(property="updated_at", type="string", example="2024-05-20T14:00:00.000000Z")
-     *         )
-     *     )
-     * )
-     */
+
     public function index(): JsonResponse
     {
         $notes = Notes::all();
@@ -47,37 +31,7 @@ class NoteController extends Controller
         return response()->json($notes);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/notes/{id}",
-     *     summary="Get a specific note",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="A note",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="user_id", type="integer", example=1),
-     *             @OA\Property(property="title", type="string", example="Test Note"),
-     *             @OA\Property(property="content", type="string", example="This is a test note."),
-     *             @OA\Property(property="created_at", type="string", example="2024-05-20T14:00:00.000000Z"),
-     *             @OA\Property(property="updated_at", type="string", example="2024-05-20T14:00:00.000000Z")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Note not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Note not found")
-     *         )
-     *     )
-     * )
-     */
+
     public function show(int $id): JsonResponse
     {
         $user_id = Auth::user()->id;
@@ -90,32 +44,7 @@ class NoteController extends Controller
         return response()->json($note);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/notes/store",
-     *     summary="Create a new note",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"title","content"},
-     *             @OA\Property(property="title", type="string", example="Test Note"),
-     *             @OA\Property(property="content", type="string", example="This is a test note.")
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Note created successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="user_id", type="integer", example=1),
-     *             @OA\Property(property="title", type="string", example="Test Note"),
-     *             @OA\Property(property="content", type="string", example="This is a test note."),
-     *             @OA\Property(property="created_at", type="string", example="2024-05-20T14:00:00.000000Z"),
-     *             @OA\Property(property="updated_at", type="string", example="2024-05-20T14:00:00.000000Z")
-     *         )
-     *     )
-     * )
-     */
+
     public function store(StoreRequest $request): JsonResponse
     {
         $user_id = Auth::user()->id;
@@ -124,44 +53,7 @@ class NoteController extends Controller
         return response()->json($note, Response::HTTP_CREATED);
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/notes/update/{id}",
-     *     summary="Update an existing note",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="title", type="string", example="Updated Test Note"),
-     *             @OA\Property(property="content", type="string", example="This is an updated test note.")
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Note updated successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="user_id", type="integer", example=1),
-     *             @OA\Property(property="title", type="string", example="Updated Test Note"),
-     *             @OA\Property(property="content", type="string", example="This is an updated test note."),
-     *             @OA\Property(property="created_at", type="string", example="2024-05-20T14:00:00.000000Z"),
-     *             @OA\Property(property="updated_at", type="string", example="2024-05-20T14:00:00.000000Z")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Note not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Note not found")
-     *         )
-     *     )
-     * )
-     */
+
     public function update(int $id, UpdateRequest $request): JsonResponse
     {
         $note = Notes::find($id);
@@ -177,32 +69,7 @@ class NoteController extends Controller
         return response()->json($note);
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/notes/delete/{id}",
-     *     summary="Delete a note",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Note deleted successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Note deleted")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Note not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Note not found")
-     *         )
-     *     )
-     * )
-     */
+
     public function destroy(int $id): JsonResponse
     {
         Notes::destroy($id);

@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use OpenApi\Attributes as OA;
 
 class AuthController extends Controller
 {
@@ -23,33 +24,49 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login','register']]);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/register",
-     *     summary="Register a new user",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"name","email","password"},
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *             @OA\Property(property="password", type="string", example="password"),
-     *             @OA\Property(property="confirm_password", type="string", example="password")
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="User registered successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="name", type="string", example="John Doe"),
-     *             @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *             @OA\Property(property="created_at", type="string", example="2024-05-20T14:00:00.000000Z"),
-     *             @OA\Property(property="updated_at", type="string", example="2024-05-20T14:00:00.000000Z")
-     *         )
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/register',
+        summary: 'Регистрация нового пользователя',
+        description: 'Создает новый аккаунт пользователя и возвращает токен доступа.',
+        tags: ['Auth'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['name', 'email', 'password', 'password_confirmation'],
+                properties: [
+                    new OA\Property(property: 'name', type: 'string', example: 'Иван Иванов'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'user@example.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'Secret123!'),
+                    new OA\Property(property: 'confirm_password', type: 'string', format: 'password', example: 'Secret123!'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Пользователь успешно создан',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'name', type: 'string', example: 'Иван Иванов'),
+                        new OA\Property(property: 'email', type: 'string', example: 'user@example.com'),
+                        new OA\Property(property: 'updated_at', type: 'string', example: '2026-02-09T02:36:58.000000Z'),
+                        new OA\Property(property: 'created_at', type: 'string', example: '2026-02-09T02:36:58.000000Z'),
+                        new OA\Property(property: 'id', type: 'intenger', example: 1),
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Ошибка валидации (например, такой email уже занят)',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'The email has already been taken.'),
+                        new OA\Property(property: 'errors', type: 'object')
+                    ]
+                )
+            )
+        ]
+    )]
     public function register(RegistrationRequest $request): JsonResponse
     {
         $user = User::create(array_merge($request->all(), ['password' => Hash::make($request->input('password'))]));
@@ -57,27 +74,43 @@ class AuthController extends Controller
         return response()->json($user, 201);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/login",
-     *     summary="Login a user",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"email","password"},
-     *             @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *             @OA\Property(property="password", type="string", example="password")
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="User logged in successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...")
-     *         )
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/login',
+        summary: 'Авторизация пользователя',
+        description: 'Проверяет учетные данные и выдает API токен (Sanctum/Passport).',
+        tags: ['Auth'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email', 'password'],
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'admin@example.com'),
+                    new OA\Property(property: 'password', type: 'string', format: 'password', example: 'secret123')
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Успешный вход',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'access_token', type: 'string', example: '1|eyJhbGciOiJIUzI1...'),
+                        new OA\Property(property: 'token_type', type: 'string', example: 'Bearer')
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Неверный логин или пароль',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.')
+                    ]
+                )
+            )
+        ]
+    )]
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
@@ -88,19 +121,6 @@ class AuthController extends Controller
         return response()->json(['token' => $token]);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/logout",
-     *     summary="Logout a user",
-     *     @OA\Response(
-     *         response=200,
-     *         description="User logged out successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Successfully logged out")
-     *         )
-     *     )
-     * )
-     */
     public function logout(): JsonResponse
     {
         JWTAuth::invalidate(JWTAuth::getToken());

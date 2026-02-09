@@ -3,7 +3,7 @@
 </p>
 
 # Модули проекта
-
+- Docker
 - php:8.4-fpm
 - nginx:alpine
 - mysql
